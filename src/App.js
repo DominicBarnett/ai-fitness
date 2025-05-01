@@ -23,12 +23,18 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+        <div className="w-full">
+          <div className="flex justify-between items-center py-4 px-4 sm:px-6 lg:px-8">
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-indigo-600">AI Fitness Coach</h1>
             </div>
             <nav className="hidden md:flex space-x-8">
+              <button 
+                onClick={() => setCurrentStep(0)}
+                className={`text-gray-600 hover:text-indigo-600 ${currentStep === 0 ? 'text-indigo-600 font-semibold' : ''}`}
+              >
+                Home
+              </button>
               <button className="text-gray-600 hover:text-indigo-600">Dashboard</button>
               <button className="text-gray-600 hover:text-indigo-600">Workouts</button>
               <button className="text-gray-600 hover:text-indigo-600">Progress</button>
@@ -45,8 +51,8 @@ function App() {
       {/* Progress Steps - Only show when not on homepage */}
       {currentStep > 0 && (
         <div className="bg-white border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="py-4">
+          <div className="w-full">
+            <div className="py-4 px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-center space-x-8">
                 <div className="flex items-center">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -84,49 +90,45 @@ function App() {
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className={currentStep === 0 ? 'max-w-5xl mx-auto' : 'max-w-3xl mx-auto'}>
-          <div className={currentStep === 0 ? '' : 'bg-white rounded-xl shadow-lg overflow-hidden'}>
-            <div className={currentStep === 0 ? '' : 'p-6'}>
-              {renderContent()}
-            </div>
-          </div>
-        </div>
+      <main className="w-full">
+        {renderContent()}
       </main>
 
       {/* Footer */}
       <footer className="bg-gray-800 text-white mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">AI Fitness Coach</h3>
-              <p className="text-gray-400">Your personal AI-powered fitness companion</p>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Features</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>Personalized Workouts</li>
-                <li>Progress Tracking</li>
-                <li>AI Recommendations</li>
-                <li>Custom Plans</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Resources</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>Blog</li>
-                <li>Help Center</li>
-                <li>Community</li>
-                <li>Support</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>Privacy Policy</li>
-                <li>Terms of Service</li>
-                <li>Cookie Policy</li>
-              </ul>
+        <div className="w-full">
+          <div className="py-12 px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              <div>
+                <h3 className="text-lg font-semibold mb-4">AI Fitness Coach</h3>
+                <p className="text-gray-400">Your personal AI-powered fitness companion</p>
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold mb-4">Features</h4>
+                <ul className="space-y-2 text-gray-400">
+                  <li>Personalized Workouts</li>
+                  <li>Progress Tracking</li>
+                  <li>AI Recommendations</li>
+                  <li>Custom Plans</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold mb-4">Resources</h4>
+                <ul className="space-y-2 text-gray-400">
+                  <li>Blog</li>
+                  <li>Help Center</li>
+                  <li>Community</li>
+                  <li>Support</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold mb-4">Legal</h4>
+                <ul className="space-y-2 text-gray-400">
+                  <li>Privacy Policy</li>
+                  <li>Terms of Service</li>
+                  <li>Cookie Policy</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
