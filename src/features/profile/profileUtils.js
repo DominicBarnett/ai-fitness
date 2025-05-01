@@ -13,25 +13,39 @@ export const getFitnessLevel = (bmi, activityLevel) => {
   return 'obese';
 };
 
-export const validateProfileData = (profileData) => {
+export const validateProfileData = (data) => {
   const errors = {};
-  
-  if (!profileData.name) {
+
+  if (!data.name) {
     errors.name = 'Name is required';
   }
-  
-  if (!profileData.age || profileData.age < 0) {
-    errors.age = 'Valid age is required';
+
+  if (!data.age) {
+    errors.age = 'Age is required';
+  } else if (isNaN(data.age) || data.age < 13 || data.age > 100) {
+    errors.age = 'Please enter a valid age between 13 and 100';
   }
-  
-  if (!profileData.weight || profileData.weight <= 0) {
-    errors.weight = 'Valid weight is required';
+
+  if (!data.weight) {
+    errors.weight = 'Weight is required';
+  } else if (isNaN(data.weight) || data.weight < 30 || data.weight > 300) {
+    errors.weight = 'Please enter a valid weight between 30 and 300 kg';
   }
-  
-  if (!profileData.height || profileData.height <= 0) {
-    errors.height = 'Valid height is required';
+
+  if (!data.height) {
+    errors.height = 'Height is required';
+  } else if (isNaN(data.height) || data.height < 100 || data.height > 250) {
+    errors.height = 'Please enter a valid height between 100 and 250 cm';
   }
-  
+
+  if (!data.gender) {
+    errors.gender = 'Gender is required';
+  }
+
+  if (data.goals.length === 0) {
+    errors.goals = 'Please select at least one fitness goal';
+  }
+
   return {
     isValid: Object.keys(errors).length === 0,
     errors

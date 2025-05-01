@@ -11,17 +11,32 @@ export const generateWorkoutPlan = (userPreferences) => {
 };
 
 export const validateWorkoutPreferences = (preferences) => {
-  // Validation logic for workout preferences
   const errors = {};
-  
-  if (!preferences.goals) {
-    errors.goals = 'Fitness goals are required';
+
+  if (!preferences.workoutType) {
+    errors.workoutType = 'Please select a workout type';
   }
-  
-  if (!preferences.frequency) {
-    errors.frequency = 'Workout frequency is required';
+
+  if (!preferences.duration) {
+    errors.duration = 'Please select a workout duration';
   }
-  
+
+  if (!preferences.daysPerWeek) {
+    errors.daysPerWeek = 'Please select number of days per week';
+  }
+
+  if (!preferences.preferredTime) {
+    errors.preferredTime = 'Please select your preferred workout time';
+  }
+
+  if (!preferences.intensityLevel) {
+    errors.intensityLevel = 'Please select an intensity level';
+  }
+
+  if (preferences.focusAreas.length === 0) {
+    errors.focusAreas = 'Please select at least one focus area';
+  }
+
   return {
     isValid: Object.keys(errors).length === 0,
     errors
