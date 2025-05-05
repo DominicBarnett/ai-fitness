@@ -2,11 +2,48 @@ import React, { useState } from 'react';
 import WorkoutGenerator from './features/workouts/WorkoutGenerator';
 import ProfileForm from './features/profile/ProfileForm';
 import HomePage from './features/home/HomePage';
+import SignIn from './features/auth/SignIn';
+import SignUp from './features/auth/SignUp';
 
 function App() {
   const [currentStep, setCurrentStep] = useState(0); // 0: Home, 1: Profile, 2: Workout
+  const [authStep, setAuthStep] = useState(null); // null: none, 'signin': sign in, 'signup': sign up
+  const [user, setUser] = useState(null);
+
+  const handleSignIn = (data) => {
+    setUser(data);
+    setAuthStep(null);
+    setCurrentStep(1); // Go to profile after sign in
+  };
+
+  const handleSignUp = (data) => {
+    setUser(data);
+    setAuthStep(null);
+    setCurrentStep(1); // Go to profile after sign up
+  };
 
   const renderContent = () => {
+    if (authStep === 'signin') {
+      return <SignIn 
+        onSignIn={handleSignIn} 
+        onSwitchToSignUp={() => setAuthStep('signup')} 
+        onBackToHome={() => {
+          setAuthStep(null);
+          setCurrentStep(0);
+        }}
+      />;
+    }
+    if (authStep === 'signup') {
+      return <SignUp 
+        onSignUp={handleSignUp} 
+        onSwitchToSignIn={() => setAuthStep('signin')} 
+        onBackToHome={() => {
+          setAuthStep(null);
+          setCurrentStep(0);
+        }}
+      />;
+    }
+
     switch (currentStep) {
       case 0:
         return <HomePage onGetStarted={() => setCurrentStep(1)} />;
@@ -41,15 +78,39 @@ function App() {
               <button className="text-gray-600 hover:text-indigo-600">Profile</button>
             </nav>
             <div className="flex items-center space-x-4">
-              <button className="px-4 py-2 text-indigo-600 hover:text-indigo-800">Sign In</button>
-              <button className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Sign Up</button>
+              {user ? (
+                <div className="flex items-center space-x-4">
+                  <span className="text-gray-600">Welcome, {user.name}</span>
+                  <button 
+                    onClick={() => setUser(null)}
+                    className="px-4 py-2 text-indigo-600 hover:text-indigo-800"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button 
+                    onClick={() => setAuthStep('signin')}
+                    className="px-4 py-2 text-indigo-600 hover:text-indigo-800"
+                  >
+                    Sign In
+                  </button>
+                  <button 
+                    onClick={() => setAuthStep('signup')}
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                  >
+                    Sign Up
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
       </header>
 
-      {/* Progress Steps - Only show when not on homepage */}
-      {currentStep > 0 && (
+      {/* Progress Steps - Only show when not on homepage and not in auth */}
+      {currentStep > 0 && !authStep && (
         <div className="bg-white border-b">
           <div className="w-full">
             <div className="py-4 px-4 sm:px-6 lg:px-8">
