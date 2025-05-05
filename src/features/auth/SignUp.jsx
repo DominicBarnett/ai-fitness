@@ -30,11 +30,31 @@ function SignUp({ onSignUp, onSwitchToSignIn, onBackToHome }) {
     }
 
     try {
-      // TODO: Implement actual sign up logic
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
-      onSignUp(formData);
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to create account');
+      }
+
+      // Store the token in localStorage
+      localStorage.setItem('token', data.token);
+      
+      // Call the onSignUp callback with the user data
+      onSignUp(data.user);
     } catch (error) {
-      setErrors({ submit: 'Failed to create account' });
+      setErrors({ submit: error.message });
     } finally {
       setIsLoading(false);
     }
