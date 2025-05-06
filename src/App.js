@@ -4,9 +4,11 @@ import ProfileForm from './features/profile/ProfileForm';
 import HomePage from './features/home/HomePage';
 import SignIn from './features/auth/SignIn';
 import SignUp from './features/auth/SignUp';
+import WorkoutsPage from './features/workouts/WorkoutsPage';
+import ProfilePage from './features/profile/ProfilePage';
 
 function App() {
-  const [currentStep, setCurrentStep] = useState(0); // 0: Home, 1: Profile, 2: Workout
+  const [currentStep, setCurrentStep] = useState(0); // 0: Home, 1: Profile, 2: Workouts
   const [authStep, setAuthStep] = useState(null); // null: none, 'signin': sign in, 'signup': sign up
   const [user, setUser] = useState(null);
 
@@ -48,9 +50,9 @@ function App() {
       case 0:
         return <HomePage onGetStarted={() => setCurrentStep(1)} />;
       case 1:
-        return <ProfileForm onComplete={() => setCurrentStep(2)} />;
+        return <ProfilePage />;
       case 2:
-        return <WorkoutGenerator onBack={() => setCurrentStep(1)} />;
+        return <WorkoutsPage />;
       default:
         return <HomePage onGetStarted={() => setCurrentStep(1)} />;
     }
@@ -72,10 +74,18 @@ function App() {
               >
                 Home
               </button>
-              <button className="text-gray-600 hover:text-indigo-600">Dashboard</button>
-              <button className="text-gray-600 hover:text-indigo-600">Workouts</button>
-              <button className="text-gray-600 hover:text-indigo-600">Progress</button>
-              <button className="text-gray-600 hover:text-indigo-600">Profile</button>
+              <button 
+                onClick={() => setCurrentStep(2)}
+                className={`text-gray-600 hover:text-indigo-600 ${currentStep === 2 ? 'text-indigo-600 font-semibold' : ''}`}
+              >
+                Workouts
+              </button>
+              <button 
+                onClick={() => setCurrentStep(1)}
+                className={`text-gray-600 hover:text-indigo-600 ${currentStep === 1 ? 'text-indigo-600 font-semibold' : ''}`}
+              >
+                Profile
+              </button>
             </nav>
             <div className="flex items-center space-x-4">
               {user ? (
