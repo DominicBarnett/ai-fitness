@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { api } from '../../utils/api';
 
 function SignIn({ onSignIn, onSwitchToSignUp, onBackToHome }) {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ function SignIn({ onSignIn, onSwitchToSignUp, onBackToHome }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrors({});
     
     // Basic validation
     const newErrors = {};
@@ -24,11 +26,15 @@ function SignIn({ onSignIn, onSwitchToSignUp, onBackToHome }) {
     }
 
     try {
-      // TODO: Implement actual sign in logic
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
-      onSignIn(formData);
+      const data = await api.post('/auth/login', formData);
+      
+      // Store the token in localStorage
+      localStorage.setItem('token', data.token);
+      
+      // Call the onSignIn callback with the user data
+      onSignIn(data.user);
     } catch (error) {
-      setErrors({ submit: 'Invalid email or password' });
+      setErrors({ submit: error.message });
     } finally {
       setIsLoading(false);
     }

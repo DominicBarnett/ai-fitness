@@ -1,50 +1,86 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchWorkoutsStart,
+  fetchWorkoutsSuccess,
+  fetchWorkoutsFailure,
+  selectWorkout,
+} from '../../store/slices/workoutSlice';
 
 function WorkoutsPage() {
-  const [selectedWorkout, setSelectedWorkout] = useState(null);
-  
-  // Mock workout data - replace with actual data from your backend
-  const workouts = [
-    {
-      id: 1,
-      title: 'Full Body Strength',
-      duration: '45 min',
-      difficulty: 'Intermediate',
-      exercises: [
-        { name: 'Push-ups', sets: 3, reps: 12 },
-        { name: 'Squats', sets: 3, reps: 15 },
-        { name: 'Plank', sets: 3, duration: '30 sec' },
-        { name: 'Lunges', sets: 3, reps: 10 },
-      ],
-      description: 'A comprehensive full-body workout targeting all major muscle groups.',
-    },
-    {
-      id: 2,
-      title: 'HIIT Cardio',
-      duration: '30 min',
-      difficulty: 'Advanced',
-      exercises: [
-        { name: 'Jumping Jacks', sets: 4, duration: '45 sec' },
-        { name: 'Mountain Climbers', sets: 4, duration: '30 sec' },
-        { name: 'Burpees', sets: 4, reps: 10 },
-        { name: 'High Knees', sets: 4, duration: '45 sec' },
-      ],
-      description: 'High-intensity interval training to boost cardiovascular fitness.',
-    },
-    {
-      id: 3,
-      title: 'Core Crusher',
-      duration: '25 min',
-      difficulty: 'Beginner',
-      exercises: [
-        { name: 'Crunches', sets: 3, reps: 15 },
-        { name: 'Russian Twists', sets: 3, reps: 20 },
-        { name: 'Leg Raises', sets: 3, reps: 12 },
-        { name: 'Plank', sets: 3, duration: '45 sec' },
-      ],
-      description: 'Focus on strengthening and toning your core muscles.',
-    },
-  ];
+  const dispatch = useDispatch();
+  const { workouts, selectedWorkout, loading, error } = useSelector((state) => state.workout);
+
+  useEffect(() => {
+    const fetchWorkouts = async () => {
+      dispatch(fetchWorkoutsStart());
+      try {
+        // Mock API call - replace with actual API call
+        const mockWorkouts = [
+          {
+            id: 1,
+            title: 'Full Body Strength',
+            duration: '45 min',
+            difficulty: 'Intermediate',
+            exercises: [
+              { name: 'Push-ups', sets: 3, reps: 12 },
+              { name: 'Squats', sets: 3, reps: 15 },
+              { name: 'Plank', sets: 3, duration: '30 sec' },
+              { name: 'Lunges', sets: 3, reps: 10 },
+            ],
+            description: 'A comprehensive full-body workout targeting all major muscle groups.',
+          },
+          {
+            id: 2,
+            title: 'HIIT Cardio',
+            duration: '30 min',
+            difficulty: 'Advanced',
+            exercises: [
+              { name: 'Jumping Jacks', sets: 4, duration: '45 sec' },
+              { name: 'Mountain Climbers', sets: 4, duration: '30 sec' },
+              { name: 'Burpees', sets: 4, reps: 10 },
+              { name: 'High Knees', sets: 4, duration: '45 sec' },
+            ],
+            description: 'High-intensity interval training to boost cardiovascular fitness.',
+          },
+          {
+            id: 3,
+            title: 'Core Crusher',
+            duration: '25 min',
+            difficulty: 'Beginner',
+            exercises: [
+              { name: 'Crunches', sets: 3, reps: 15 },
+              { name: 'Russian Twists', sets: 3, reps: 20 },
+              { name: 'Leg Raises', sets: 3, reps: 12 },
+              { name: 'Plank', sets: 3, duration: '45 sec' },
+            ],
+            description: 'Focus on strengthening and toning your core muscles.',
+          },
+        ];
+        dispatch(fetchWorkoutsSuccess(mockWorkouts));
+      } catch (error) {
+        dispatch(fetchWorkoutsFailure(error.message));
+      }
+    };
+
+    fetchWorkouts();
+  }, [dispatch]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-gray-600">Loading workouts...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-red-600">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -61,7 +97,7 @@ function WorkoutsPage() {
                     ? 'ring-2 ring-indigo-500'
                     : 'hover:shadow-md'
                 }`}
-                onClick={() => setSelectedWorkout(workout)}
+                onClick={() => dispatch(selectWorkout(workout))}
               >
                 <div className="flex justify-between items-start">
                   <div>

@@ -1,34 +1,84 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  updateProfileStart,
+  updateProfileSuccess,
+  updateProfileFailure,
+  setProfile,
+} from '../../store/slices/userSlice';
 
 function ProfilePage() {
+  const dispatch = useDispatch();
+  const { profile, loading, error } = useSelector((state) => state.user);
   const [isEditing, setIsEditing] = useState(false);
-  
-  // Mock user data - replace with actual user data from your backend
-  const [userData, setUserData] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    age: 28,
-    height: 175, // cm
-    weight: 75, // kg
-    fitnessGoal: 'Build Muscle',
-    experienceLevel: 'Intermediate',
-    preferredWorkoutDays: ['Monday', 'Wednesday', 'Friday'],
-    equipment: ['Dumbbells', 'Resistance Bands', 'Yoga Mat'],
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    age: '',
+    height: '',
+    weight: '',
+    fitnessGoal: '',
+    experienceLevel: '',
+    preferredWorkoutDays: [],
+    equipment: [],
   });
+
+  useEffect(() => {
+    // Mock initial profile data - replace with actual API call
+    const mockProfile = {
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      age: '28',
+      height: '175',
+      weight: '75',
+      fitnessGoal: 'Build Muscle',
+      experienceLevel: 'Intermediate',
+      preferredWorkoutDays: ['Monday', 'Wednesday', 'Friday'],
+      equipment: ['Dumbbells', 'Resistance Bands', 'Yoga Mat'],
+    };
+    dispatch(setProfile(mockProfile));
+  }, [dispatch]);
+
+  useEffect(() => {
+    setFormData(profile);
+  }, [profile]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUserData(prev => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically save the data to your backend
-    setIsEditing(false);
+    dispatch(updateProfileStart());
+    try {
+      // Mock API call - replace with actual API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      dispatch(updateProfileSuccess(formData));
+      setIsEditing(false);
+    } catch (error) {
+      dispatch(updateProfileFailure(error.message));
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-gray-600">Loading profile...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-red-600">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -56,7 +106,7 @@ function ProfilePage() {
                   <input
                     type="text"
                     name="name"
-                    value={userData.name}
+                    value={formData.name}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
@@ -67,7 +117,7 @@ function ProfilePage() {
                   <input
                     type="email"
                     name="email"
-                    value={userData.email}
+                    value={formData.email}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
@@ -78,7 +128,7 @@ function ProfilePage() {
                   <input
                     type="number"
                     name="age"
-                    value={userData.age}
+                    value={formData.age}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
@@ -89,7 +139,7 @@ function ProfilePage() {
                   <input
                     type="number"
                     name="height"
-                    value={userData.height}
+                    value={formData.height}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
@@ -100,7 +150,7 @@ function ProfilePage() {
                   <input
                     type="number"
                     name="weight"
-                    value={userData.weight}
+                    value={formData.weight}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
@@ -117,7 +167,7 @@ function ProfilePage() {
                   <label className="block text-sm font-medium text-gray-700">Fitness Goal</label>
                   <select
                     name="fitnessGoal"
-                    value={userData.fitnessGoal}
+                    value={formData.fitnessGoal}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
@@ -133,7 +183,7 @@ function ProfilePage() {
                   <label className="block text-sm font-medium text-gray-700">Experience Level</label>
                   <select
                     name="experienceLevel"
-                    value={userData.experienceLevel}
+                    value={formData.experienceLevel}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
@@ -154,15 +204,15 @@ function ProfilePage() {
                   <label key={equipment} className="inline-flex items-center px-3 py-2 rounded-full bg-gray-100 text-gray-700">
                     <input
                       type="checkbox"
-                      checked={userData.equipment.includes(equipment)}
+                      checked={formData.equipment.includes(equipment)}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setUserData(prev => ({
+                          setFormData(prev => ({
                             ...prev,
                             equipment: [...prev.equipment, equipment]
                           }));
                         } else {
-                          setUserData(prev => ({
+                          setFormData(prev => ({
                             ...prev,
                             equipment: prev.equipment.filter(item => item !== equipment)
                           }));

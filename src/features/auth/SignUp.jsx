@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { api } from '../../utils/api';
 
 function SignUp({ onSignUp, onSwitchToSignIn, onBackToHome }) {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ function SignUp({ onSignUp, onSwitchToSignIn, onBackToHome }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrors({});
     
     // Basic validation
     const newErrors = {};
@@ -30,24 +32,12 @@ function SignUp({ onSignUp, onSwitchToSignIn, onBackToHome }) {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
+      const data = await api.post('/auth/register', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to create account');
-      }
-
+      
       // Store the token in localStorage
       localStorage.setItem('token', data.token);
       

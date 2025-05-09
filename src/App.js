@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import WorkoutGenerator from './features/workouts/WorkoutGenerator';
 import ProfileForm from './features/profile/ProfileForm';
 import HomePage from './features/home/HomePage';
@@ -6,22 +7,29 @@ import SignIn from './features/auth/SignIn';
 import SignUp from './features/auth/SignUp';
 import WorkoutsPage from './features/workouts/WorkoutsPage';
 import ProfilePage from './features/profile/ProfilePage';
+import { loginSuccess, logout } from './store/slices/authSlice';
 
 function App() {
+  const dispatch = useDispatch();
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [currentStep, setCurrentStep] = useState(0); // 0: Home, 1: Profile, 2: Workouts
   const [authStep, setAuthStep] = useState(null); // null: none, 'signin': sign in, 'signup': sign up
-  const [user, setUser] = useState(null);
 
   const handleSignIn = (data) => {
-    setUser(data);
+    dispatch(loginSuccess(data));
     setAuthStep(null);
     setCurrentStep(1); // Go to profile after sign in
   };
 
   const handleSignUp = (data) => {
-    setUser(data);
+    dispatch(loginSuccess(data));
     setAuthStep(null);
     setCurrentStep(1); // Go to profile after sign up
+  };
+
+  const handleSignOut = () => {
+    dispatch(logout());
+    setCurrentStep(0);
   };
 
   const renderContent = () => {
@@ -88,11 +96,11 @@ function App() {
               </button>
             </nav>
             <div className="flex items-center space-x-4">
-              {user ? (
+              {isAuthenticated ? (
                 <div className="flex items-center space-x-4">
                   <span className="text-gray-600">Welcome, {user.name}</span>
                   <button 
-                    onClick={() => setUser(null)}
+                    onClick={handleSignOut}
                     className="px-4 py-2 text-indigo-600 hover:text-indigo-800"
                   >
                     Sign Out
