@@ -83,16 +83,16 @@ function App() {
                 Home
               </button>
               <button 
-                onClick={() => setCurrentStep(2)}
-                className={`text-gray-600 hover:text-indigo-600 ${currentStep === 2 ? 'text-indigo-600 font-semibold' : ''}`}
-              >
-                Workouts
-              </button>
-              <button 
                 onClick={() => setCurrentStep(1)}
                 className={`text-gray-600 hover:text-indigo-600 ${currentStep === 1 ? 'text-indigo-600 font-semibold' : ''}`}
               >
                 Profile
+              </button>
+              <button 
+                onClick={() => setCurrentStep(2)}
+                className={`text-gray-600 hover:text-indigo-600 ${currentStep === 2 ? 'text-indigo-600 font-semibold' : ''}`}
+              >
+                Workouts
               </button>
             </nav>
             <div className="flex items-center space-x-4">
