@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { api } from '../../utils/api';
+import { motion } from 'framer-motion';
+import { useAuth } from '../../hooks/useAuth';
+import AnimatedButton from '../../components/AnimatedButton';
 
 function SignIn({ onSignIn, onSwitchToSignUp, onBackToHome }) {
   const [formData, setFormData] = useState({
@@ -7,11 +9,11 @@ function SignIn({ onSignIn, onSwitchToSignUp, onBackToHome }) {
     password: '',
   });
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
     setErrors({});
     
     // Basic validation
@@ -21,22 +23,14 @@ function SignIn({ onSignIn, onSwitchToSignUp, onBackToHome }) {
     
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      setIsLoading(false);
       return;
     }
 
     try {
-      const data = await api.post('/auth/login', formData);
-      
-      // Store the token in localStorage
-      localStorage.setItem('token', data.token);
-      
-      // Call the onSignIn callback with the user data
+      const { data } = await login.mutateAsync(formData);
       onSignIn(data.user);
     } catch (error) {
       setErrors({ submit: error.message });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -47,40 +41,57 @@ function SignIn({ onSignIn, onSwitchToSignUp, onBackToHome }) {
         <div className="w-full">
           <div className="flex justify-between items-center py-4 px-4 sm:px-6 lg:px-8">
             <div className="flex items-center">
-              <button
+              <AnimatedButton
                 onClick={onBackToHome}
-                className="text-gray-600 hover:text-indigo-600 flex items-center"
+                variant="link"
+                className="flex items-center"
               >
                 <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Back to Home
-              </button>
+              </AnimatedButton>
             </div>
-            <div className="flex items-center">
+            <motion.div 
+              className="flex items-center"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
               <h1 className="text-2xl font-bold text-indigo-600">AI Fitness Coach</h1>
-            </div>
+            </motion.div>
           </div>
         </div>
       </header>
 
       <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <motion.div 
+          className="sm:mx-auto sm:w-full sm:max-w-md"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
-            <button
+            <AnimatedButton
               onClick={onSwitchToSignUp}
-              className="font-medium text-indigo-600 hover:text-indigo-500"
+              variant="link"
+              className="font-medium"
             >
               create a new account
-            </button>
+            </AnimatedButton>
           </p>
-        </div>
+        </motion.div>
 
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <motion.div 
+          className="mt-8 sm:mx-auto sm:w-full sm:max-w-md"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
@@ -142,35 +153,42 @@ function SignIn({ onSignIn, onSwitchToSignUp, onBackToHome }) {
                   </label>
                 </div>
 
-                <div className="text-sm">
-                  <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-                    Forgot your password?
-                  </a>
-                </div>
+                <AnimatedButton
+                  variant="link"
+                  className="text-sm"
+                >
+                  Forgot your password?
+                </AnimatedButton>
               </div>
 
               {errors.submit && (
-                <div className="rounded-md bg-red-50 p-4">
+                <motion.div 
+                  className="rounded-md bg-red-50 p-4"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <div className="flex">
                     <div className="ml-3">
                       <h3 className="text-sm font-medium text-red-800">{errors.submit}</h3>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               )}
 
               <div>
-                <button
+                <AnimatedButton
                   type="submit"
-                  disabled={isLoading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={login.isPending}
+                  variant="primary"
+                  className="w-full"
                 >
-                  {isLoading ? 'Signing in...' : 'Sign in'}
-                </button>
+                  {login.isPending ? 'Signing in...' : 'Sign in'}
+                </AnimatedButton>
               </div>
             </form>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
