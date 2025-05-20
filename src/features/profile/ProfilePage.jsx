@@ -200,7 +200,7 @@ function ProfilePage() {
             <div>
               <h3 className="text-lg font-medium text-gray-900 mb-4">Available Equipment</h3>
               <div className="flex flex-wrap gap-2">
-                {['Dumbbells', 'Resistance Bands', 'Yoga Mat', 'Pull-up Bar', 'Bench', 'Kettlebells'].map((equipment) => (
+                {['Dumbbells', 'Resistance Bands', 'Yoga Mat', 'Pull-up Bar', 'Bench', 'Kettlebells', 'Commercial Gym'].map((equipment) => (
                   <label key={equipment} className="inline-flex items-center px-3 py-2 rounded-full bg-gray-100 text-gray-700">
                     <input
                       type="checkbox"
