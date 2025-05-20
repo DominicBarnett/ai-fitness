@@ -33,12 +33,12 @@ function SignUp({ onSignUp, onSwitchToSignIn, onBackToHome }) {
     }
 
     try {
-      const { data } = await register.mutateAsync({
+      const response = await register.mutateAsync({
         name: formData.name,
         email: formData.email,
         password: formData.password,
       });
-      onSignUp(data.user);
+      onSignUp(response.user);
     } catch (error) {
       setErrors({ submit: error.message });
     }

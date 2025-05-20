@@ -5,7 +5,10 @@ export const useAuth = () => {
   const queryClient = useQueryClient();
 
   const login = useMutation({
-    mutationFn: (credentials) => api.post('/auth/login', credentials),
+    mutationFn: async (credentials) => {
+      const response = await api.post('/auth/login', credentials);
+      return response;
+    },
     onSuccess: (data) => {
       localStorage.setItem('token', data.token);
       queryClient.setQueryData(['user'], data.user);
@@ -13,7 +16,10 @@ export const useAuth = () => {
   });
 
   const register = useMutation({
-    mutationFn: (userData) => api.post('/auth/register', userData),
+    mutationFn: async (userData) => {
+      const response = await api.post('/auth/register', userData);
+      return response;
+    },
     onSuccess: (data) => {
       localStorage.setItem('token', data.token);
       queryClient.setQueryData(['user'], data.user);

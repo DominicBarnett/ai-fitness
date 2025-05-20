@@ -27,8 +27,8 @@ function SignIn({ onSignIn, onSwitchToSignUp, onBackToHome }) {
     }
 
     try {
-      const { data } = await login.mutateAsync(formData);
-      onSignIn(data.user);
+      const response = await login.mutateAsync(formData);
+      onSignIn(response.user);
     } catch (error) {
       setErrors({ submit: error.message });
     }
