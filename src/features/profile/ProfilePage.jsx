@@ -6,7 +6,7 @@ import {
   updateProfileFailure,
   setProfile,
 } from '../../store/slices/userSlice';
-import { OpenAI } from 'openai';
+// import { OpenAI } from 'openai';
 
 function ProfilePage() {
   const dispatch = useDispatch();
@@ -69,26 +69,21 @@ function ProfilePage() {
   const generateWorkout = async () => {
     setIsGeneratingWorkout(true);
     try {
-      const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
+      const res = await fetch('http://localhost:5000/api/openai/generate-workout', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // Add auth token
+        },
+        body: JSON.stringify({ profile: formData }),
       });
 
-      const prompt = `Generate a workout routine for this profile:
-        Name: ${formData.name}
-        Age: ${formData.age}
-        Height: ${formData.height} cm
-        Weight: ${formData.weight} kg
-        Fitness Goal: ${formData.fitnessGoal}
-        Experience Level: ${formData.experienceLevel}
-        Available Equipment: ${formData.equipment.join(', ')}
-        Preferred Workout Days: ${formData.preferredWorkoutDays.join(', ')}`;
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
 
-      const completion = await openai.chat.completions.create({
-        messages: [{ role: "user", content: prompt }],
-        model: "gpt-3.5-turbo",
-      });
-
-      console.log('Generated Workout:', completion.choices[0].message.content);
+      const data = await res.json();
+      console.log('Generated Workout:', data.workout);
     } catch (error) {
       console.error('Error generating workout:', error);
     } finally {

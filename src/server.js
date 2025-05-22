@@ -18,6 +18,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', protect, require('./api/user'));
 app.use('/api/workouts', protect, require('./api/workouts'));
 app.use('/api/profile', protect, require('./api/profile'));
+app.use('/api/openai', protect, require('./api/openai'));
 
 // Test route
 app.get('/api/test', (req, res) => {
