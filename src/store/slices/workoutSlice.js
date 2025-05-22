@@ -16,13 +16,14 @@ const workoutSlice = createSlice({
       state.error = null;
     },
     fetchWorkoutsSuccess: (state, action) => {
-      state.workouts = action.payload;
+      state.workouts = Array.isArray(action.payload) ? action.payload : [];
       state.loading = false;
       state.error = null;
     },
     fetchWorkoutsFailure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
+      state.workouts = [];
     },
     selectWorkout: (state, action) => {
       state.selectedWorkout = action.payload;

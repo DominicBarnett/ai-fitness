@@ -56,9 +56,9 @@ function App() {
 
     switch (currentStep) {
       case 0:
-        return <HomePage onGetStarted={() => setCurrentStep(1)} />;
+        return <HomePage onGetStarted={() => setAuthStep('signup')} />;
       case 1:
-        return <ProfilePage />;
+        return <ProfilePage setCurrentStep={setCurrentStep} />;
       case 2:
         return <WorkoutsPage />;
       default:

@@ -8,7 +8,7 @@ import {
 } from '../../store/slices/userSlice';
 // import { OpenAI } from 'openai';
 
-function ProfilePage() {
+function ProfilePage({ setCurrentStep }) {
   const dispatch = useDispatch();
   const { profile, loading, error } = useSelector((state) => state.user);
   const [isEditing, setIsEditing] = useState(false);
@@ -73,7 +73,7 @@ function ProfilePage() {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}` // Add auth token
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({ profile: formData }),
       });
@@ -83,9 +83,33 @@ function ProfilePage() {
       }
 
       const data = await res.json();
-      console.log('Generated Workout:', data.workout);
+      
+      // Save the generated workout
+      const saveRes = await fetch('http://localhost:5000/api/workouts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          title: 'Your personalized AI workout',
+          description: data.workout,
+          type: 'AI Generated',
+          difficulty: formData.experienceLevel,
+          equipment: formData.equipment,
+          duration: '45', // Default duration, you might want to adjust this
+          exercises: [] // The workout will be in the description
+        }),
+      });
+
+      if (!saveRes.ok) {
+        throw new Error('Failed to save workout');
+      }
+
+      // Redirect to workout page
+      setCurrentStep(2);
     } catch (error) {
-      console.error('Error generating workout:', error);
+      console.error('Error:', error);
     } finally {
       setIsGeneratingWorkout(false);
     }
