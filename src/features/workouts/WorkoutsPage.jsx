@@ -26,12 +26,12 @@ function WorkoutsPage() {
         }
 
         const data = await res.json();
-        console.log('Workouts data:', data); // Debug log
+        // console.log('Workouts data:', data); // Debug log
         // Ensure data is an array before dispatching
         const workoutsArray = Array.isArray(data) ? data : data.workouts || [];
         dispatch(fetchWorkoutsSuccess(workoutsArray));
       } catch (error) {
-        console.error('Error fetching workouts:', error);
+        // console.error('Error fetching workouts:', error);
         dispatch(fetchWorkoutsFailure(error.message));
       }
     };
@@ -57,7 +57,7 @@ function WorkoutsPage() {
 
   // Safety check for workouts array
   if (!Array.isArray(workouts)) {
-    console.error('Workouts is not an array:', workouts);
+    // console.error('Workouts is not an array:', workouts);
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-red-600">Error: Invalid workouts data</div>
@@ -90,7 +90,11 @@ function WorkoutsPage() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">{workout.title}</h3>
-                      <p className="text-gray-600 mt-1">{workout.description}</p>
+                      <p className="text-gray-600 mt-1">
+                        {workout.type === 'AI Generated' 
+                          ? 'Click to see your personalized workout plan'
+                          : workout.description}
+                      </p>
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="px-2 py-1 text-sm bg-indigo-100 text-indigo-800 rounded-full">
@@ -114,22 +118,59 @@ function WorkoutsPage() {
               <h3 className="text-xl font-bold text-gray-900 mb-4">{selectedWorkout.title}</h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-sm text-gray-600">
-                  <span>Duration: {selectedWorkout.duration}</span>
+                  <span>Duration: {selectedWorkout.duration} min</span>
                   <span>Difficulty: {selectedWorkout.difficulty}</span>
                 </div>
-                <div className="border-t border-gray-200 pt-4">
-                  <h4 className="font-semibold text-gray-900 mb-3">Exercises</h4>
-                  <div className="space-y-3">
-                    {selectedWorkout.exercises.map((exercise, index) => (
-                      <div key={index} className="flex justify-between items-center">
-                        <span className="text-gray-700">{exercise.name}</span>
-                        <span className="text-gray-600">
-                          {exercise.reps ? `${exercise.sets} × ${exercise.reps} reps` : `${exercise.sets} × ${exercise.duration}`}
+                {selectedWorkout.type === 'AI Generated' ? (
+                  <div className="border-t border-gray-200 pt-4">
+                    <h4 className="font-semibold text-gray-900 mb-3">Equipment Needed</h4>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {selectedWorkout.equipment.map((item, index) => (
+                        <span key={index} className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm">
+                          {item}
                         </span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                    <h4 className="font-semibold text-gray-900 mb-3">Workout Plan</h4>
+                    <div className="prose prose-sm max-w-none">
+                      {selectedWorkout.description.split('\n').map((line, index) => {
+                        // Style different parts of the workout plan
+                        if (line.includes('Day')) {
+                          return (
+                            <h5 key={index} className="text-lg font-semibold text-indigo-600 mt-4 mb-2">
+                              {line}
+                            </h5>
+                          );
+                        } else if (line.match(/^\d+\./)) {
+                          return (
+                            <div key={index} className="flex items-start space-x-2 my-2">
+                              <span className="text-indigo-600 font-medium">{line.split('.')[0]}.</span>
+                              <span className="text-gray-700">{line.split('.')[1]}</span>
+                            </div>
+                          );
+                        } else if (line.trim() === '') {
+                          return <br key={index} />;
+                        } else {
+                          return <p key={index} className="text-gray-600 mt-2">{line}</p>;
+                        }
+                      })}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="border-t border-gray-200 pt-4">
+                    <h4 className="font-semibold text-gray-900 mb-3">Exercises</h4>
+                    <div className="space-y-3">
+                      {selectedWorkout.exercises.map((exercise, index) => (
+                        <div key={index} className="flex justify-between items-center">
+                          <span className="text-gray-700">{exercise.name}</span>
+                          <span className="text-gray-600">
+                            {exercise.reps ? `${exercise.sets} × ${exercise.reps} reps` : `${exercise.sets} × ${exercise.duration}`}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <button className="w-full mt-6 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
                   Start Workout
                 </button>

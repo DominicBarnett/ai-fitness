@@ -4,10 +4,10 @@ const Workout = require('../models/Workout');
 
 // Get user's workouts
 router.get('/', async (req, res) => {
-  console.log('GET /api/workouts - User:', req.user);
+  // console.log('GET /api/workouts - User:', req.user);
   try {
     const workouts = await Workout.find({ user: req.user._id });
-    console.log('Found workouts:', workouts);
+    // console.log('Found workouts:', workouts);
     res.json(workouts);
   } catch (error) {
     console.error('Error fetching workouts:', error);
@@ -17,15 +17,15 @@ router.get('/', async (req, res) => {
 
 // Create new workout
 router.post('/', async (req, res) => {
-  console.log('POST /api/workouts - Request body:', req.body);
+  // console.log('POST /api/workouts - Request body:', req.body);
   try {
     const workout = new Workout({
       ...req.body,
       user: req.user._id
     });
-    console.log('Creating workout:', workout);
+    // console.log('Creating workout:', workout);
     await workout.save();
-    console.log('Workout saved successfully');
+    // console.log('Workout saved successfully');
     res.status(201).json(workout);
   } catch (error) {
     console.error('Error creating workout:', error);
