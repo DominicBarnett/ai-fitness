@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import WorkoutGenerator from './features/workouts/WorkoutGenerator';
-import ProfileForm from './features/profile/ProfileForm';
+// import WorkoutGenerator from './features/workouts/WorkoutGenerator';
+// import ProfileForm from './features/profile/ProfileForm';
 import HomePage from './features/home/HomePage';
 import SignIn from './features/auth/SignIn';
 import SignUp from './features/auth/SignUp';
@@ -62,7 +62,7 @@ function App() {
       case 2:
         return <WorkoutsPage />;
       default:
-        return <HomePage onGetStarted={() => setCurrentStep(1)} />;
+        return <HomePage onGetStarted={() => setAuthStep('signup')} />;
     }
   };
 

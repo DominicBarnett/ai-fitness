@@ -19,8 +19,10 @@
     "framer-motion": "^12.11.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.14.1",
+    "openai": "^4.102.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.5.2",
     "react-redux": "^9.2.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"

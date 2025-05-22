@@ -6,11 +6,13 @@ import {
   updateProfileFailure,
   setProfile,
 } from '../../store/slices/userSlice';
+import { OpenAI } from 'openai';
 
 function ProfilePage() {
   const dispatch = useDispatch();
   const { profile, loading, error } = useSelector((state) => state.user);
   const [isEditing, setIsEditing] = useState(false);
+  const [isGeneratingWorkout, setIsGeneratingWorkout] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -61,6 +63,36 @@ function ProfilePage() {
       setIsEditing(false);
     } catch (error) {
       dispatch(updateProfileFailure(error.message));
+    }
+  };
+
+  const generateWorkout = async () => {
+    setIsGeneratingWorkout(true);
+    try {
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+
+      const prompt = `Generate a workout routine for this profile:
+        Name: ${formData.name}
+        Age: ${formData.age}
+        Height: ${formData.height} cm
+        Weight: ${formData.weight} kg
+        Fitness Goal: ${formData.fitnessGoal}
+        Experience Level: ${formData.experienceLevel}
+        Available Equipment: ${formData.equipment.join(', ')}
+        Preferred Workout Days: ${formData.preferredWorkoutDays.join(', ')}`;
+
+      const completion = await openai.chat.completions.create({
+        messages: [{ role: "user", content: prompt }],
+        model: "gpt-3.5-turbo",
+      });
+
+      console.log('Generated Workout:', completion.choices[0].message.content);
+    } catch (error) {
+      console.error('Error generating workout:', error);
+    } finally {
+      setIsGeneratingWorkout(false);
     }
   };
 
@@ -228,7 +260,15 @@ function ProfilePage() {
             </div>
 
             {isEditing && (
-              <div className="flex justify-end">
+              <div className="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  onClick={generateWorkout}
+                  disabled={isGeneratingWorkout}
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+                >
+                  {isGeneratingWorkout ? 'Generating...' : 'Generate Workout'}
+                </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
